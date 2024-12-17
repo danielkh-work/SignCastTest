@@ -1,0 +1,39 @@
+name: Build & Release
+
+# Adding in a comment here to just see if this damn thing works
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+
+      - name: Setup Yarn
+        # You may pin to the exact commit or the version.
+        # uses: mskelton/setup-yarn@aa37049724856b4e0b13739cd2b5e69686a29403
+        uses: mskelton/setup-yarn@v1.1.0
+        with:
+          # Node version to use, defaults to the current LTS version.
+          node-version: 16.x
+
+      - name: 'Build/release Electron app'
+        uses: samuelmeuli/action-electron-builder@v1
+        with:
+          # GitHub token, automatically provided to the action
+          # (No need to define this secret in the repo settings)
+          github_token: ${{ secrets.github_token }}
+
+          # If the commit is tagged with a version (e.g. "v1.0.0"),
+          # release the app after building
+          release: true
